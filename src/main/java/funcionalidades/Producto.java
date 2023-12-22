@@ -23,6 +23,9 @@ public class Producto {
         this.cantidad = cantidad;
         this.porcentaje = porcentaje;
     }
+
+    public Producto() {
+    }
  
     
     public String getNombre() {
@@ -70,6 +73,36 @@ public class Producto {
         ps.setFloat(2, precioC);
         ps.setInt(3,  cantidad);
         ps.setFloat(4,  porcentaje);
+        
+        int filasAfectadas = ps.executeUpdate();
+
+        if (filasAfectadas > 0) {
+            System.out.println("Inserción exitosa");
+        } else {
+            System.out.println("No se pudo insertar el producto");
+        }
+        }catch(SQLException ex){
+            System.out.println("Error:"+ex);
+        }
+    }
+    public void updateSql(Producto producto){
+        Conexion con=new Conexion();
+        Connection conexion=con.getConnection();
+        
+        PreparedStatement ps;
+        ResultSet rs;
+         
+        try{
+        ps = conexion.prepareStatement("UPDATE producto SET nombre=?, "
+                + "precio_compra=?, cantidad=?, porcentaje_ganancia=? "
+                + "where id_prod=?");
+
+             
+        ps.setString(1, producto.getNombre());
+        ps.setFloat(2, producto.getPrecioC());
+        ps.setInt(3,  producto.getCantidad());
+        ps.setFloat(4,  producto.getPorcentaje());
+        ps.setInt(5,  producto.getId());
         
         int filasAfectadas = ps.executeUpdate();
 
@@ -157,5 +190,150 @@ public class Producto {
         }
         
     }
-} 
+
+    public static boolean existeProductoConIndice(int indice) {
+    Conexion con = new Conexion();
+    try (Connection conexion = con.getConnection()) {
+        String sql = "SELECT 1 FROM producto WHERE id_prod = ? LIMIT 1";
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+            ps.setInt(1, indice);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+    
+    public static Producto obtenerProductoPorIndice(int indice) {
+        Conexion con = new Conexion();
+        Producto producto = null;
+        try (Connection conexion = con.getConnection()) {
+            String sql = "SELECT * FROM producto WHERE id_prod = ?";
+            try (PreparedStatement ps = conexion.prepareStatement(sql)) {
+                ps.setInt(1, indice);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        producto = new Producto();
+                        producto.setId(rs.getInt("id_prod"));
+                        producto.setNombre(rs.getString("nombre")); 
+                        producto.setPrecioC(rs.getFloat("precio_compra")); 
+                        producto.setCantidad(rs.getInt("cantidad")); 
+                        producto.setPorcentaje(rs.getFloat("porcentaje_ganancia")); 
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return producto;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    public static int contarProdBajo(){
+        
+        Conexion con=new Conexion();
+        Connection conexion=con.getConnection();
+        
+        PreparedStatement ps;
+        ResultSet rs;
+        int cantidad = 0;
+        try{
+            ps=conexion.prepareStatement("Select COUNT(*) FROM producto where cantidad<=3 and cantidad>=1 ");
+            rs=ps.executeQuery();
+            
+            if(rs.next()){
+                cantidad=rs.getInt(1);
+            }
+        }catch(SQLException ex){
+            System.out.println("Error: " +ex);
+        }
+        return cantidad;
+    }
+    public static int contarProd(){
+        
+        Conexion con=new Conexion();
+        Connection conexion=con.getConnection();
+        
+        PreparedStatement ps;
+        ResultSet rs;
+        int cantidad = 0;
+        try{
+            ps=conexion.prepareStatement("Select COUNT(*) FROM producto ");
+            rs=ps.executeQuery();
+            
+            if(rs.next()){
+                cantidad=rs.getInt(1);
+            }
+        }catch(SQLException ex){
+            System.out.println("Error: " +ex);
+        }
+        return cantidad;
+    }
+ 
+    public static int contarProdSin(){
+        
+        Conexion con=new Conexion();
+        Connection conexion=con.getConnection();
+        
+        PreparedStatement ps;
+        ResultSet rs;
+        int cantidad = 0;
+        try{
+            ps=conexion.prepareStatement("Select COUNT(*) FROM producto where cantidad=0");
+            rs=ps.executeQuery();
+            
+            if(rs.next()){
+                cantidad=rs.getInt(1);
+            }
+        }catch(SQLException ex){
+            System.out.println("Error: " +ex);
+        }
+        return cantidad;
+    }
+    
+    public static float calcularCosto() {
+    float costo = 0;
+                Conexion con=new Conexion();
+                Connection conexion=con.getConnection();
+        try ( 
+             PreparedStatement ps = conexion.prepareStatement("SELECT SUM(precio_compra*cantidad) FROM producto");
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                costo = rs.getFloat(1);
+            }
+
+        } catch (SQLException ex) { 
+            System.out.println("Error al calcular el costo: " + ex);
+        }
+
+        return costo;
+    }
+    public static float calcularCostoTotal() {
+        float costoTotal = 0;
+                Conexion con = new Conexion();
+            Connection conexion = con.getConnection();
+        try (
+            PreparedStatement ps = conexion.prepareStatement("SELECT SUM(precio_compra * (1 + porcentaje_ganancia / 100) * cantidad) AS total FROM producto");
+            ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                costoTotal = rs.getFloat("total");
+            }
+
+          } catch (SQLException ex) {
+              // Manejo de excepciones según tus necesidades.
+              System.out.println("Error al calcular el costo total: " + ex);
+          }
+
+          return costoTotal;
+      }
+    
+}
+ 
  

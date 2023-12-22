@@ -89,27 +89,27 @@
             </div>
             <div class="intermediate-bottom-container">
                 <div class="total-earning inter-container">
-                    <span class="top">VEF $<span class="earging" id="earging">100.000</span></span>
+                    <span class="top">VEF $<span class="earging" id="earging"><%=Producto.calcularCostoTotal()%></span></span>
                     <span class="bottom">Valor en stock</span>
                 </div>
                 <div class="cost-value inter-container">
-                    <span class="top">VEF $<span class="earging" id="earging">40.000</span></span>
+                    <span class="top">VEF $<span class="earging" id="earging"><%=Producto.calcularCosto()%></span></span>
                     <span class="bottom">Costo de stock</span>
                 </div>
                 <div class="total-value inter-container">
-                    <span class="top">VEF $<span class="earging" id="earging">60.000</span></span>
-                    <span class="bottom">Ganancia Neto</span>
+                    <span class="top">VEF $<span class="earging" id="earging"><%=Producto.calcularCostoTotal()-Producto.calcularCosto()%></span></span>
+                    <span class="bottom">Ganancia Neto</span> 
                 </div>
                 <div class="total-value inter-container">
-                    <span class="top">0</span>
+                    <span class="top"><%= Producto.contarProdBajo()%></span>
                     <span class="bottom"> Stock bajo<span class="point oranged">•</span></span>
                 </div>
                 <div class="empty-stock inter-container">
-                    <span class="top">3</span>
+                    <span class="top"><%= Producto.contarProdSin()%></span>
                     <span class="bottom"> Sin Stock<span class="point red">•</span></span>
                 </div>
                 <div class="total-value inter-container">
-                    <span class="top">100</span>
+                    <span class="top"><%= Producto.contarProd()%></span>
                     <span class="bottom">Elementos en stock</span>
                 </div>
             </div>
@@ -158,7 +158,7 @@
                                     <form action="stockControlador" method="post">
                                         <input type="hidden" name="accion" value="editar">
                                         <input type="hidden" name="indice" value="<%= producto.getId() %>">
-                                        <button type="submit" class="editar">Editar</button>
+                                        <button type="submit" class="editar" id="editarProd">Editar</button>
                                     </form>
                                 </div>
                             </td>
@@ -207,6 +207,7 @@
         </div>
     </div> 
 </body>    
-<script src="script.js"></script> 
-<script src="uploadImg.js"></script>   
+
+<script src="https://kit.fontawesome.com/5d13b729b2.js" crossorigin="anonymous"></script>
+<script src="script.js"></script>        
 </html>

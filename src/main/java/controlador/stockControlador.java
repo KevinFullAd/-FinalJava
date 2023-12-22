@@ -100,6 +100,55 @@ public class stockControlador extends HttpServlet {
 
             response.sendRedirect("index.jsp");
         }    
+        if ("editar".equals(accion)) { 
+        String indiceStr = request.getParameter("indice");
+        if (indiceStr != null && !indiceStr.isEmpty()) {
+            int indice = Integer.parseInt(indiceStr); 
+        if (Producto.existeProductoConIndice(indice)) { 
+            Producto productoAEditar = Producto.obtenerProductoPorIndice(indice);
+ 
+            request.setAttribute("indice", indice);
+            request.setAttribute("productoAEditar", productoAEditar);
+            System.out.println("Producto: " +productoAEditar); 
+            // Redirigir a la página de edición
+            request.getRequestDispatcher("editar.jsp").forward(request, response);
+            } else {  
+                response.sendRedirect("paginaDeError.jsp");
+                }
+            }
+        }
+        
+        if ("actualizar".equals(accion)) {
+    // Obtener el índice del producto a editar desde el formulario
+    String indiceStr = request.getParameter("indiceEditado");
+    int indiceActualizar = Integer.parseInt(indiceStr);
+
+    // Obtener el producto a través del índice
+    Producto productoAEditar = Producto.obtenerProductoPorIndice(indiceActualizar);
+
+    if (productoAEditar != null) {
+        // Obtener los nuevos valores del formulario
+        String nombre = request.getParameter("ed-nombre");
+        String precio = request.getParameter("ed-precioC");
+        String cantidad = request.getParameter("ed-cantidad");
+        String porcentaje = request.getParameter("ed-porcentaje");
+
+        // Actualizar los valores del producto
+        productoAEditar.setNombre(nombre);
+        productoAEditar.setPrecioC(Float.parseFloat(precio));
+        productoAEditar.setCantidad(Integer.parseInt(cantidad));
+        productoAEditar.setPorcentaje(Float.parseFloat(porcentaje));
+
+        // Actualizar en la base de datos
+        productoAEditar.updateSql(productoAEditar);
+
+        // Redirigir a la página principal después de la actualización
+        response.sendRedirect("index.jsp");
+    } else {
+        // Manejar el caso donde el producto no se encuentra
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Producto no encontrado para el índice proporcionado");
+    }
+}    
     }
 }
     
