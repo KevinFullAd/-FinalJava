@@ -131,37 +131,44 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody> 
-                        <%
-                            List<Producto> productos = (List<Producto>) request.getServletContext ().getAttribute("productos" );
-                    
-                            for (int i=0;i<productos.size();i++){
-                        
+                    <tbody>
+                        <%  
+                            List<Producto> productos = Producto.obtenerProductos();
+                            System.out.println("Productos en JSP: " + productos);
+                            if (productos != null) {
+                                for (int i = 0; i < productos.size(); i++) {
+                                    Producto producto = productos.get(i);
                         %>
-                        <tr >
-                            <td><%=productos.get(i).getNombre()%></td>
-                            <td>sexo</td> 
-                            <td>100</td>
-                            <td>10</td>
-                            <td>122</td>   
-                            <td>20</td>   
-                            <td class="acciones">
-                                 <div class="acciones-cont">
+                        <tr>
+                            <td><%= producto.getId() %></td>
+                            <td><%= producto.getNombre() %></td>
+                            <td><%= (producto.getPrecioC()*(producto.getPorcentaje() /100)+producto.getPrecioC()) %></td>
+                            <td><%= producto.getPrecioC() %></td>
+                            <td><%= producto.getCantidad() %></td>
+                            <td>%<%= producto.getPorcentaje() %></td>
+                            <!-- Agrega aquí las columnas adicionales que deseas mostrar -->
 
-                                     <form action="productoServlet" method="post" >
-                                         <input type="hidden" name="accion" value="eliminar">
-                                         <input type="hidden" name="indice" value="">
-                                         <button type="submit" class="borrar">Eliminar</button>
-                                     </form>
-                                     <form action="productoServlet" method="post" >
-                                         <input type="hidden" name="accion" value="editar">
-                                         <input type="hidden" name="indice" value="">
-                                         <button type="submit" class="editar">editar</button>
-                                     </form>
-                                 </div>
+                            <td class="acciones">
+                                <div class="acciones-cont">
+                                    <form action="stockControlador" method="post">
+                                        <input type="hidden" name="accion" value="eliminar">
+                                        <input type="hidden" name="indice" value="<%= producto.getId() %>">
+                                        <button type="submit" class="borrar">Eliminar</button>
+                                    </form>
+                                    <form action="stockControlador" method="post">
+                                        <input type="hidden" name="accion" value="editar">
+                                        <input type="hidden" name="indice" value="<%= producto.getId() %>">
+                                        <button type="submit" class="editar">Editar</button>
+                                    </form>
+                                </div>
                             </td>
-                        </tr>   
+                        </tr>
+                        <%
+                            }
+                        }
+                        %>
                     </tbody>
+
                 </table>
             </div> 
         </div>

@@ -592,7 +592,7 @@ aside{
             position: relative;
             z-index: 10;
             width: 400px;
-            height: 300px;
+            height: auto;
             background-color: rgb(255, 255, 255);
             box-shadow: 16px 10px 0px #8A78FF;
             border-radius: 8px;

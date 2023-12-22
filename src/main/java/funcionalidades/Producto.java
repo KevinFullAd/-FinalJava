@@ -10,19 +10,21 @@ import java.util.List;
  
 
 public class Producto {
+    private int id;
     private String nombre;
     private float precioC;
     private int cantidad;
     private float porcentaje;  
 
-    public Producto(String nombre, float precioC, int cantidad, float porcentaje) {
+    public Producto(int id,String nombre, float precioC, int cantidad, float porcentaje) {
+        this.id = id;
         this.nombre = nombre;
         this.precioC = precioC;
         this.cantidad = cantidad;
         this.porcentaje = porcentaje;
     }
  
-
+    
     public String getNombre() {
         return nombre;
     }
@@ -80,25 +82,29 @@ public class Producto {
             System.out.println("Error:"+ex);
         }
     }
+
+    public int getId() {
+        return id;
+    }
     
-    public List<Producto> obtenerProductos() {
+    public static List<Producto> obtenerProductos() {
         Conexion con = new Conexion();
         Connection conexion = con.getConnection();
         List<Producto> productos = new ArrayList<>();
-        PreparedStatement ps;
-        ResultSet rs;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
     try {  
         ps = conexion.prepareStatement("SELECT * FROM producto");
         rs = ps.executeQuery();
  
         while (rs.next()) {
-            int id = rs.getInt("id");
+            int id = rs.getInt("id_prod");
             String nombre = rs.getString("nombre");
             float precioC = rs.getFloat("precio_compra");
             int cantidad = rs.getInt("cantidad");
             float porcentaje = rs.getFloat("porcentaje_ganancia");
  
-            Producto producto = new Producto(nombre, precioC, cantidad, porcentaje);
+            Producto producto = new Producto(id,nombre, precioC, cantidad, porcentaje);
             productos.add(producto);
         }
 
@@ -109,28 +115,47 @@ public class Producto {
         if (rs != null) {
             try {
                 rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException e) {               
+                System.out.println("error"+e);
             }
         }
         if (ps != null) {
             try {
                 ps.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println("error"+e);
             }
         }
         if (conexion != null) {
             try {
                 conexion.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println("error"+e);
             }
         }
     }
 
     return productos;
 }
-
+    
+    public static void  eliminarProducto(int var){
+        Conexion con=new Conexion();
+        Connection conexion=con.getConnection();
+        
+        PreparedStatement ps;
+        
+        
+        try{
+        ps =conexion.prepareStatement("DELETE FROM producto WHERE id_prod=?");
+        ps.setInt(1, var);
+        ps.executeUpdate();   
+        
+        List<Producto> productos;
+        
+        }catch (Exception ex){
+            System.out.println("Error: " +ex);
+        }
+        
+    }
 } 
  
